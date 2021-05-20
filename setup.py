@@ -15,7 +15,7 @@ except KeyError:
 setup(
     name='rds-snapshot',
 
-    version='0.1.1%s' % snapshot,
+    version='0.2.1%s' % snapshot,
 
     description='A tool for handling RDS snapshots in AWS from the CLI or in scripts.',
     long_description=long_description,
@@ -44,6 +44,8 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.7',
 
         'Topic :: System :: Archiving :: Backup',
         'Topic :: Utilities'
@@ -58,5 +60,5 @@ setup(
         ]
     },
 
-    install_requires=['boto3']
+    install_requires=['boto3', 'botocore']
 )

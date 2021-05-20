@@ -20,14 +20,14 @@ def get_rds():
 def listdbs(args):
     for db in get_rds().describe_db_instances()['DBInstances']:
         if not args.info:
-            print db['DBInstanceIdentifier']
+            print(db['DBInstanceIdentifier'])
         else:
-            print '%s (%s):\t%s:%d' % (
+            print('%s (%s):\t%s:%d' % (
                 db['DBInstanceIdentifier'],
                 db['Engine'],
                 db['Endpoint']['Address'],
                 db['Endpoint']['Port']
-            )
+            ))
 
 
 def lists(args):
@@ -39,29 +39,29 @@ def lists(args):
 
     # bail if no stacks to dump
     if not len(dbs):
-        print 'this command needs a list of dbs, or the --all flag'
+        print('this command needs a list of dbs, or the --all flag')
         sys.exit(1)
 
     for db in dbs:
         snaps = get_rds().describe_db_snapshots(DBInstanceIdentifier=db)['DBSnapshots']
         if len(dbs) > 1:
-            print '---', db, '---'
+            print('---', db, '---')
 
         for snap in snaps:
             if not args.info:
-                print snap['DBSnapshotIdentifier']
+                print(snap['DBSnapshotIdentifier'])
             else:
                 try:
                     create_time = snap['SnapshotCreateTime']
                 except KeyError:
                     create_time = 'progress: %d%%\t\t\t' % snap['PercentProgress']
-                print '%s:%s\t%s\t%s\t%s' % (
+                print('%s:%s\t%s\t%s\t%s' % (
                     snap['DBSnapshotIdentifier'],
                     ''.ljust(max([len(s['DBSnapshotIdentifier']) for s in snaps]) - len(snap['DBSnapshotIdentifier'])),
                     create_time,
                     snap['SnapshotType'],
                     snap['Status']
-                )
+                ))
 
 
 def create(args):
@@ -69,7 +69,7 @@ def create(args):
         DBSnapshotIdentifier='dbsnap-%s-%s' % (args.rds_instance, datetime.now().strftime('%Y%m%d-%H%M%S')),
         DBInstanceIdentifier=args.rds_instance
     )
-    print snap['DBSnapshot']['DBSnapshotIdentifier']
+    print(snap['DBSnapshot']['DBSnapshotIdentifier'])
 
 
 def delete(args):
@@ -85,7 +85,7 @@ def cleanup(args):
             continue
 
         if snap['SnapshotCreateTime'].replace(tzinfo=None) < datetime.now() - timedelta(days=args.maxage):
-            print 'delete', snap['DBSnapshotIdentifier']
+            print('delete', snap['DBSnapshotIdentifier'])
             if not args.dry:
                 get_rds().delete_db_snapshot(DBSnapshotIdentifier=snap['DBSnapshotIdentifier'])
 
@@ -122,8 +122,8 @@ def main():
     try:
         args.func(args)
     except botocore.exceptions.NoRegionError as err:
-        print str(err)
+        print(str(err))
         sys.exit(1)
     except botocore.exceptions.ClientError as err:
-        print str(err)
+        print(str(err))
         sys.exit(1)
